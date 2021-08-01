@@ -1,9 +1,23 @@
 pipeline {
-    agent { docker { image '127.0.0.1:32000/python:3.5.1' } }
+    agent any
+    environment {
+        CI = 'true' 
+        HOME = '.'
+    }
     stages {
-        stage('build') {
+        stage('Install dependencies') {
             steps {
-                sh 'python --version'
+                sh 'npm install'
+            }
+        }
+        stage('Test') { 
+            steps {
+                sh './scripts/test' 
+            }
+        }
+        stage('Build Container') { 
+            steps {
+                sh 'docker build -t test-app:${BUILD_NUMBER} . ' 
             }
         }
     }
